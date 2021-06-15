@@ -13,7 +13,7 @@ struct Chip
     name: String,
     bluetooth: String,
     operatingTemp: String,
-    psram: i16
+    psram: i8
 
 }
 
