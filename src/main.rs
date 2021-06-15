@@ -16,14 +16,12 @@ struct Chip
     psram: i16
 
 }
-/*
-https://products.espressif.com/#/product-selector?language=en&names=
-*/
 
+//filter by entered chip name as cmd argument
 fn parse_name(name_arg:Vec<&str>, raw:&Envelope )
 {
     for name in name_arg {
-        print!("Name {}:\n", name);
+        print!("\nName {}:\n", name);
         
         let mut unknown_chip = true;
         for chip in &raw.results { 
@@ -52,6 +50,7 @@ fn parse_name(name_arg:Vec<&str>, raw:&Envelope )
 }
 }
 
+//parse string temperature into integers
 fn parse_string(temperature_str:&str) -> (i16, i16)
 {
     let v:Vec<&str> = temperature_str.split(|c| c == ' ').collect();
@@ -66,15 +65,16 @@ fn parse_string(temperature_str:&str) -> (i16, i16)
     return (min_temp, max_temp)
 }
 
+//filter by entered temperature as cmd argument
 fn parse_temperature(temperature_arg:&str, raw:&Envelope )
 {
-    let pair_arg = parse_string(temperature_arg);
+    let pair_arg_temp = parse_string(temperature_arg);
 
-    print!("Temperature {}:\n[ ",temperature_arg);
+    print!("\nTemperature {}:\n[ ",temperature_arg);
     for chip in &raw.results
     {
-        let pair_tmp = parse_string(&chip.operatingTemp);
-        if pair_arg.0 >= pair_tmp.0 && pair_arg.0 <= pair_tmp.1
+        let pair_chip_temp = parse_string(&chip.operatingTemp);
+        if pair_arg_temp.0 >= pair_chip_temp.0 && pair_arg_temp.0 <= pair_chip_temp.1
         {
             print!("{} ", chip.name);
         }
@@ -107,11 +107,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     //println!("{:?}", name_arg);
     //println!("{:?}", temperature_arg);
     
+    //get JSON data
     let response = reqwest::blocking::get("https://products.espressif.com/iot-solution-api/query?language=en")?;
     let text = response.text()?;
     let raw: Envelope = serde_json::from_str(&text)?;
     
-
     //let filtered = serde_json::to_string(&raw.results)?;
     //println!("{}", &filtered);
     //std::fs::write("data.json", filtered)?;
