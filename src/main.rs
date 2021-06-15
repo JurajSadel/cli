@@ -92,6 +92,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 .takes_value(true)
                                 .help("Chip Name"))
                             .arg(Arg::with_name("operatingTemp")
+                                .allow_hyphen_values(true)
                                 .short("t")
                                 .long("temperature")
                                 .takes_value(true)
